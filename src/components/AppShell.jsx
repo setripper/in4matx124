@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { clearSession } from '../lib/api.js';
 
 const adminLinks = [
   { key: 'dashboard', label: 'Dashboard', to: '/admin-dashboard', icon: 'grid' },
@@ -127,7 +128,7 @@ export default function AppShell({ variant = 'admin', activeKey, children }) {
           <Link className="topbar-icon" to="/profile" aria-label="Profile">
             <Glyph name="users" />
           </Link>
-          <Link className="topbar-icon" to="/login" aria-label="Log out">
+          <Link className="topbar-icon" to="/login" aria-label="Log out" onClick={clearSession}>
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M9 6H5v12h4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
               <path d="M14 8l4 4-4 4M18 12H9" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />

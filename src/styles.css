@@ -34,6 +34,11 @@ textarea {
   font: inherit;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -890,6 +895,14 @@ select:focus {
   text-align: center;
 }
 
+.demo-credentials {
+  margin: 18px 0 0;
+  color: #4a5565;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 .register-page {
   align-items: start;
   padding-top: 56px;
@@ -1398,6 +1411,43 @@ select:focus {
 
 .preview-panel {
   align-self: start;
+}
+
+.employee-side-column {
+  display: grid;
+  align-self: start;
+  gap: 24px;
+}
+
+.employee-editor-form {
+  display: grid;
+}
+
+.employee-editor-form input,
+.employee-editor-form select {
+  height: 44px;
+  margin-bottom: 16px;
+}
+
+.employee-editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.row-select-button {
+  min-height: 34px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.api-status {
+  min-height: 20px;
+  color: #4a5565;
 }
 
 .employee-preview-card {

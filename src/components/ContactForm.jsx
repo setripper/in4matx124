@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiRequest } from '../lib/api.js';
 
 const initialForm = {
   name: '',
@@ -15,10 +16,19 @@ export default function ContactForm({ selectedFeature }) {
     setForm((current) => ({ ...current, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setStatus(`Thanks, ${form.name || 'there'}! We will follow up about ${selectedFeature}.`);
-    setForm(initialForm);
+    setStatus('Sending...');
+    try {
+      const response = await apiRequest('/api/contact', {
+        method: 'POST',
+        body: JSON.stringify({ ...form, selectedFeature }),
+      });
+      setStatus(response.message);
+      setForm(initialForm);
+    } catch (error) {
+      setStatus(error.message);
+    }
   }
 
   return (

@@ -1,14 +1,54 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header.jsx';
+import { apiRequest, saveSession } from '../lib/api.js';
 
 export default function RegisterPage() {
   const [agreed, setAgreed] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    company: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [status, setStatus] = useState('');
+  const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
-  function handleSubmit(event) {
+  function updateField(event) {
+    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    navigate('/admin-dashboard');
+    if (!agreed) {
+      setStatus('You must agree to the Terms of Service and Privacy Policy.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setStatus('Passwords do not match.');
+      return;
+    }
+
+    setBusy(true);
+    setStatus('');
+    try {
+      const session = await apiRequest('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+      saveSession(session);
+      navigate(session.user.role === 'admin' ? '/admin-dashboard' : '/employee-dashboard');
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -21,27 +61,19 @@ export default function RegisterPage() {
 
           <form className="register-wire-card" onSubmit={handleSubmit}>
             <label htmlFor="register-name">FULL NAME</label>
-            <input id="register-name" type="text" placeholder="John Doe" />
+            <input id="register-name" name="name" type="text" placeholder="John Doe" value={form.name} onChange={updateField} required />
 
             <label htmlFor="register-email">EMAIL ADDRESS</label>
-            <input id="register-email" type="email" placeholder="user@example.com" />
+            <input id="register-email" name="email" type="email" placeholder="user@example.com" value={form.email} onChange={updateField} required />
 
             <label htmlFor="register-company">COMPANY / ORGANIZATION</label>
-            <input id="register-company" type="text" placeholder="Company Name" />
-
-            <label htmlFor="register-role">ROLE</label>
-            <select id="register-role" defaultValue="">
-              <option value="" disabled />
-              <option>Administrator</option>
-              <option>Manager</option>
-              <option>Employee</option>
-            </select>
+            <input id="register-company" name="company" type="text" placeholder="Company Name" value={form.company} onChange={updateField} required />
 
             <label htmlFor="register-password">PASSWORD</label>
-            <input id="register-password" type="password" placeholder="Password" />
+            <input id="register-password" name="password" type="password" placeholder="Password" value={form.password} onChange={updateField} minLength="8" required />
 
             <label htmlFor="register-confirm">CONFIRM PASSWORD</label>
-            <input id="register-confirm" type="password" placeholder="Password" />
+            <input id="register-confirm" name="confirmPassword" type="password" placeholder="Password" value={form.confirmPassword} onChange={updateField} minLength="8" required />
 
             <label className="wire-check-row" htmlFor="register-terms">
               <input
@@ -53,9 +85,10 @@ export default function RegisterPage() {
               <span>I agree to the Terms of Service and Privacy Policy</span>
             </label>
 
-            <button className="button button-primary form-button" type="submit">
+            <button className="button button-primary form-button" type="submit" disabled={busy}>
               CREATE ACCOUNT
             </button>
+            <div className="form-status" role="status" aria-live="polite">{status}</div>
           </form>
 
           <p className="auth-footer-line wire-footer-line">
