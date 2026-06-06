@@ -2,6 +2,8 @@
 
 Full-stack workforce management prototype built with React, Vite, Node.js, Express, JWT authentication, and PostgreSQL.
 
+Live deployment: [in4matx124-workforce.vercel.app](https://in4matx124-workforce.vercel.app)
+
 ## Features
 
 - Real registration and login with hashed passwords and JWT sessions
